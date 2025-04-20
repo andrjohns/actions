@@ -98,7 +98,8 @@ export async function getR(version: string) {
 }
 
 async function acquireR(version: IRVersion) {
-  if (core.getInput("install-r") !== "true") {
+  if (core.getInput("install-r") !== "true" && (
+        !IS_WINDOWS || core.getInput("force-install-rtools") !== "true")) {
     return;
   }
 
@@ -437,6 +438,9 @@ async function acquireRMacOS(version: IRVersion): Promise<string> {
 }
 
 async function acquireRWindows(version: IRVersion): Promise<string> {
+  if (core.getInput("install-r") !== "true") {
+    return "";
+  }
   let fileName: string = path.basename(version.url);
   let downloadPath: string | null = null;
   try {
@@ -783,7 +787,8 @@ export async function determineVersion(version: string): Promise<IRVersion> {
   let os: string = OS != "linux" ? OS : await getLinuxPlatform();
   let url: string =
     "https://api.r-hub.io/rversions/resolve/" + version + "/" + os;
-  if (ARCH) {
+  // Windows ARM64 only supported for RTools
+  if (ARCH && !IS_WINDOWS) {
     url = url + "/" + ARCH;
   }
   var tags = (await rest.get<IRVersion>(url)).result;

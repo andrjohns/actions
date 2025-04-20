@@ -48,6 +48,10 @@ inputs:
       use the existing installation in the GitHub Action image. Note that if it
       is "false", you probably need to run `sudo apt-get update` yourself.'
     default: true
+  force-install-rtools:
+    description: 'If "true" download and install RTools during the setup on Windows,
+      regardless of whether R is to be installed.'
+    default: false
   windows-path-include-rtools:
     description: "Whether to add Rtools to the PATH."
     default: true
